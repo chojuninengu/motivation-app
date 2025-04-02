@@ -1,18 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Motivation</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="container">
         <h1 id="greeting">Hello, Friend!</h1>
-        <p id="quote">Click the button for motivation!</p>
-        <button onclick="fetchQuote()">Get Motivation</button>
+
+        <!-- Emotional State Form -->
+        <div class="state-form">
+            <h2>How are you feeling today?</h2>
+            <form id="stateForm">
+                <input type="text" id="emotionalState" placeholder="e.g., depression, study, stressed" required>
+                <button type="submit">Get Motivation</button>
+            </form>
+        </div>
+
+        <!-- Motivation Display -->
+        <div class="motivation-display">
+            <div id="motivationContent">
+                <p class="quote" id="quote">Your motivation will appear here...</p>
+                <p class="author" id="author"></p>
+            </div>
+            <button onclick="fetchNewMotivation()">Get Another</button>
+        </div>
+
+        <!-- Save Motivation Form -->
+        <div class="save-motivation">
+            <h2>Save Your Favorite</h2>
+            <form id="saveForm">
+                <textarea id="savedQuote" readonly></textarea>
+                <input type="text" id="savedAuthor" readonly>
+                <input type="text" id="savedTags" placeholder="Add your own tags (optional)">
+                <button type="submit">Save Motivation</button>
+            </form>
+        </div>
+
+        <!-- Saved Motivations -->
+        <div class="saved-motivations">
+            <h2>Your Saved Motivations</h2>
+            <div id="savedMotivationsList"></div>
+        </div>
+
         <button onclick="toggleDarkMode()">🌙</button>
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>
