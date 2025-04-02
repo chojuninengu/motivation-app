@@ -13,119 +13,106 @@ const savedAuthorInput = document.getElementById('savedAuthor');
 const savedTagsInput = document.getElementById('savedTags');
 const savedMotivationsList = document.getElementById('savedMotivationsList');
 
-// Current state and quote
+// Current state
 let currentState = '';
-let currentQuote = null;
 
-// Fetch all motivations
-async function fetchMotivations() {
-    try {
-        const response = await fetch(`${API_URL}/motivations`);
-        const motivations = await response.json();
-        displayMotivations(motivations);
-    } catch (error) {
-        console.error('Error fetching motivations:', error);
-        motivationsContainer.innerHTML = '<p>Error loading motivations. Please try again later.</p>';
+// Collection of motivational quotes
+const motivationalQuotes = [
+    {
+        content: "The only way to do great work is to love what you do.",
+        author: "Steve Jobs",
+        tags: ["work", "passion", "success"]
+    },
+    {
+        content: "Believe you can and you're halfway there.",
+        author: "Theodore Roosevelt",
+        tags: ["belief", "confidence", "success"]
+    },
+    {
+        content: "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+        author: "Winston Churchill",
+        tags: ["success", "failure", "perseverance"]
+    },
+    {
+        content: "The future belongs to those who believe in the beauty of their dreams.",
+        author: "Eleanor Roosevelt",
+        tags: ["dreams", "future", "belief"]
+    },
+    {
+        content: "Don't watch the clock; do what it does. Keep going.",
+        author: "Sam Levenson",
+        tags: ["perseverance", "time", "motivation"]
+    },
+    {
+        content: "The only limit to our realization of tomorrow is our doubts of today.",
+        author: "Franklin D. Roosevelt",
+        tags: ["doubt", "future", "belief"]
+    },
+    {
+        content: "You are never too old to set another goal or to dream a new dream.",
+        author: "C.S. Lewis",
+        tags: ["dreams", "goals", "age"]
+    },
+    {
+        content: "The way to get started is to quit talking and begin doing.",
+        author: "Walt Disney",
+        tags: ["action", "start", "motivation"]
+    },
+    {
+        content: "It does not matter how slowly you go as long as you do not stop.",
+        author: "Confucius",
+        tags: ["perseverance", "progress", "motivation"]
+    },
+    {
+        content: "You miss 100% of the shots you don't take.",
+        author: "Wayne Gretzky",
+        tags: ["opportunity", "action", "success"]
+    },
+    {
+        content: "The only person you are destined to become is the person you decide to be.",
+        author: "Ralph Waldo Emerson",
+        tags: ["destiny", "choice", "self-improvement"]
+    },
+    {
+        content: "Everything you've ever wanted is on the other side of fear.",
+        author: "George Addair",
+        tags: ["fear", "courage", "success"]
+    },
+    {
+        content: "Success is walking from failure to failure with no loss of enthusiasm.",
+        author: "Winston Churchill",
+        tags: ["success", "failure", "enthusiasm"]
+    },
+    {
+        content: "The mind is everything. What you think you become.",
+        author: "Buddha",
+        tags: ["mindset", "thoughts", "self-improvement"]
+    },
+    {
+        content: "The best time to plant a tree was 20 years ago. The second best time is now.",
+        author: "Chinese Proverb",
+        tags: ["time", "action", "opportunity"]
     }
-}
+];
 
-// Display motivations in the UI
-function displayMotivations(motivations) {
-    motivationsContainer.innerHTML = '';
-
-    if (motivations.length === 0) {
-        motivationsContainer.innerHTML = '<p>No motivations yet. Add one to get started!</p>';
-        return;
+// Get a random quote
+function getRandomQuote(state = '') {
+    // If state is provided, filter quotes by matching tags
+    let filteredQuotes = motivationalQuotes;
+    if (state) {
+        const stateLower = state.toLowerCase();
+        filteredQuotes = motivationalQuotes.filter(quote =>
+            quote.tags.some(tag => tag.toLowerCase().includes(stateLower))
+        );
     }
 
-    motivations.forEach(motivation => {
-        const motivationElement = document.createElement('div');
-        motivationElement.className = 'motivation-item';
-        motivationElement.innerHTML = `
-            <div class="motivation-content">${motivation.content}</div>
-            ${motivation.author ? `<div class="motivation-author">- ${motivation.author}</div>` : ''}
-            <button class="delete-btn" onclick="deleteMotivation(${motivation.id})">Delete</button>
-        `;
-        motivationsContainer.appendChild(motivationElement);
-    });
-}
-
-// Add new motivation
-async function addMotivation(event) {
-    event.preventDefault();
-
-    const content = document.getElementById('motivationContent').value;
-    const author = document.getElementById('authorName').value;
-
-    try {
-        const response = await fetch(`${API_URL}/motivations`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                content,
-                author: author || null
-            })
-        });
-
-        if (response.ok) {
-            // Clear form
-            motivationForm.reset();
-            // Refresh motivations list
-            fetchMotivations();
-        } else {
-            throw new Error('Failed to add motivation');
-        }
-    } catch (error) {
-        console.error('Error adding motivation:', error);
-        alert('Failed to add motivation. Please try again.');
-    }
-}
-
-// Delete motivation
-async function deleteMotivation(id) {
-    if (!confirm('Are you sure you want to delete this motivation?')) {
-        return;
+    // If no quotes match the state, use all quotes
+    if (filteredQuotes.length === 0) {
+        filteredQuotes = motivationalQuotes;
     }
 
-    try {
-        const response = await fetch(`${API_URL}/motivations/${id}`, {
-            method: 'DELETE'
-        });
-
-        if (response.ok) {
-            fetchMotivations();
-        } else {
-            throw new Error('Failed to delete motivation');
-        }
-    } catch (error) {
-        console.error('Error deleting motivation:', error);
-        alert('Failed to delete motivation. Please try again.');
-    }
-}
-
-// Fetch quote from Quotable API
-async function fetchQuote(state) {
-    try {
-        // First try to get a quote with tags matching the state
-        let response = await fetch(`https://api.quotable.io/random?tags=${encodeURIComponent(state)}`);
-
-        // If no quotes found with those tags, get a random quote
-        if (!response.ok) {
-            response = await fetch('https://api.quotable.io/random');
-        }
-
-        const data = await response.json();
-        return {
-            content: data.content,
-            author: data.author,
-            tags: data.tags || []
-        };
-    } catch (error) {
-        console.error('Error fetching quote:', error);
-        return null;
-    }
+    // Return a random quote from the filtered list
+    return filteredQuotes[Math.floor(Math.random() * filteredQuotes.length)];
 }
 
 // Display quote
@@ -136,121 +123,34 @@ function displayQuote(quote) {
         return;
     }
 
-    currentQuote = quote;
     quoteElement.textContent = quote.content;
     authorElement.textContent = `- ${quote.author}`;
-
-    // Update save form
-    savedQuoteInput.value = quote.content;
-    savedAuthorInput.value = quote.author;
 }
 
 // Fetch new motivation
-async function fetchNewMotivation() {
-    if (!currentState) return;
-
-    const quote = await fetchQuote(currentState);
+function fetchNewMotivation() {
+    console.log('Fetching new motivation for state:', currentState);
+    const quote = getRandomQuote(currentState);
     displayQuote(quote);
 }
 
 // Handle state form submission
-stateForm.addEventListener('submit', async (e) => {
+stateForm.addEventListener('submit', (e) => {
     e.preventDefault();
     currentState = emotionalStateInput.value.trim();
+    console.log('Form submitted with state:', currentState);
 
-    if (currentState) {
-        const quote = await fetchQuote(currentState);
-        displayQuote(quote);
-    }
+    fetchNewMotivation();
 });
-
-// Handle save form submission
-saveForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    if (!currentQuote) return;
-
-    const tags = [...currentQuote.tags];
-    if (savedTagsInput.value.trim()) {
-        tags.push(...savedTagsInput.value.split(',').map(tag => tag.trim()));
-    }
-
-    try {
-        const response = await fetch('http://localhost:3000/api/motivations', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                content: currentQuote.content,
-                author: currentQuote.author,
-                tags: tags
-            })
-        });
-
-        if (response.ok) {
-            savedTagsInput.value = '';
-            fetchSavedMotivations();
-        } else {
-            throw new Error('Failed to save motivation');
-        }
-    } catch (error) {
-        console.error('Error saving motivation:', error);
-        alert('Failed to save motivation. Please try again.');
-    }
-});
-
-// Fetch saved motivations
-async function fetchSavedMotivations() {
-    try {
-        const response = await fetch('http://localhost:3000/api/motivations');
-        const motivations = await response.json();
-        displaySavedMotivations(motivations);
-    } catch (error) {
-        console.error('Error fetching saved motivations:', error);
-        savedMotivationsList.innerHTML = '<p>Error loading saved motivations.</p>';
-    }
-}
-
-// Display saved motivations
-function displaySavedMotivations(motivations) {
-    savedMotivationsList.innerHTML = '';
-
-    if (motivations.length === 0) {
-        savedMotivationsList.innerHTML = '<p>No saved motivations yet.</p>';
-        return;
-    }
-
-    motivations.forEach(motivation => {
-        const item = document.createElement('div');
-        item.className = 'saved-motivation-item';
-
-        const tags = motivation.tags || [];
-        const tagsHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
-
-        item.innerHTML = `
-            <div class="quote">${motivation.content}</div>
-            <div class="author">- ${motivation.author}</div>
-            ${tags.length ? `<div class="saved-tags">${tagsHtml}</div>` : ''}
-            <button class="delete-btn" onclick="deleteMotivation(${motivation.id})">Delete</button>
-        `;
-
-        savedMotivationsList.appendChild(item);
-    });
-}
 
 // Toggle dark mode
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
 }
 
-// Event Listeners
-motivationForm.addEventListener('submit', addMotivation);
-
-// Initial load
-fetchMotivations();
-fetchSavedMotivations();
-
 // Random multinational greetings
 const greetings = ["Hello", "Hola", "Bonjour", "Guten Tag", "Ciao", "こんにちは", "Привет"];
 document.getElementById('greeting').textContent = greetings[Math.floor(Math.random() * greetings.length)];
+
+// Initial quote fetch
+fetchNewMotivation();
