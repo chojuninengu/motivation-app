@@ -1,36 +1,152 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: #f4f4f4;
-    color: #333;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
     padding: 20px;
-}
-
-.container {
-    max-width: 600px;
-    margin: auto;
-    padding: 20px;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-}
-
-button {
-    margin: 10px;
-    padding: 10px 20px;
-    background: dodgerblue;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    background-color: #f5f5f5;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .dark-mode {
-    background: #222;
-    color: white;
+    background-color: #1a1a1a;
+    color: #ffffff;
 }
 
-.dark-mode .container {
-    background: #333;
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1,
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+.dark-mode h1,
+.dark-mode h2 {
+    color: #fff;
+}
+
+.state-form,
+.motivation-display,
+.save-motivation,
+.saved-motivations {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.dark-mode .state-form,
+.dark-mode .motivation-display,
+.dark-mode .save-motivation,
+.dark-mode .saved-motivations {
+    background-color: #2d2d2d;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input,
+textarea {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.dark-mode input,
+.dark-mode textarea {
+    background-color: #3d3d3d;
+    border-color: #555;
+    color: #fff;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
     color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.motivation-display {
+    text-align: center;
+}
+
+.quote {
+    font-size: 24px;
+    font-style: italic;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.author {
+    font-size: 18px;
+    color: #666;
+    font-weight: bold;
+}
+
+.dark-mode .author {
+    color: #aaa;
+}
+
+.saved-motivation-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+}
+
+.dark-mode .saved-motivation-item {
+    border-bottom-color: #444;
+}
+
+.saved-motivation-item:last-child {
+    border-bottom: none;
+}
+
+.saved-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.tag {
+    background-color: #e0e0e0;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.dark-mode .tag {
+    background-color: #444;
+}
+
+.delete-btn {
+    background-color: #f44336;
+    padding: 5px 10px;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.delete-btn:hover {
+    background-color: #d32f2f;
 }
