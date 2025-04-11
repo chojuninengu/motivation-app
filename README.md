@@ -1,4 +1,4 @@
-# Motivation App
+ # Motivation App
 
 A simple web application that provides motivational quotes based on your emotional state.
 
